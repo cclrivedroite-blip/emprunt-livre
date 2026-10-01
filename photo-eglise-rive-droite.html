@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Envoyer une photo – Église rive droite</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Arial,sans-serif;background:#f4f4f4;display:flex;align-items:center;justify-content:center;padding:20px;color:#222}
+.card{width:100%;max-width:520px;background:#fff;border-radius:18px;padding:30px 24px;box-shadow:0 4px 20px #0002;text-align:center}
+h1{font-size:28px;margin:0 0 12px}
+p{line-height:1.5;color:#555;margin:10px 0 24px}
+.camera{display:block;width:100%;padding:18px;border-radius:12px;background:#1769aa;color:#fff;font-size:19px;font-weight:bold;cursor:pointer;margin-bottom:14px}
+input[type=file]{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;background:#fafafa}
+.preview{display:none;max-width:100%;max-height:260px;margin:16px auto;border-radius:10px}
+.send{width:100%;padding:16px;margin-top:4px;border:0;border-radius:12px;background:#333;color:white;font-size:18px;font-weight:bold;cursor:pointer}
+.send:disabled{opacity:.45;cursor:not-allowed}
+.note{font-size:13px;color:#777;margin-top:18px}
+#status{margin-top:16px;font-weight:bold;line-height:1.4}
+.error{color:#b42318}
+</style>
+</head>
+<body>
+<main class="card">
+<h1>📷 EMPRUNTER UN LIVRE </h1>
+<p>Prenez une photo de la couverture du livre <br>
+<strong>pour enregistrer votre emprunt </strong>.</p>
+
+<form id="photoForm"
+      action="https://formsubmit.co/cclrivedroite@gmail.com"
+      method="POST"
+      enctype="multipart/form-data">
+
+<input type="hidden" name="_subject" value="Nouvelle photo – Église rive droite">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_captcha" value="true">
+<input type="hidden" name="_next" value="https://VOTRE-ADRESSE-GITHUB.github.io/photo-eglise/">
+
+<label class="camera" for="photo">📷 Prendre la photo du livre emprunté </label>
+<input id="photo" name="photo" type="file" accept="image/*" capture="environment" required>
+
+<img id="preview" class="preview" alt="Aperçu de la photo">
+
+<button id="send" class="send" type="submit" disabled>Envoyer la photo du livre emprunté </button>
+<div id="status" aria-live="polite"></div>
+</form>
+
+<div class="note">Image de 10 Mo maximum.</div>
+</main>
+
+<script>
+const photo=document.getElementById("photo");
+const send=document.getElementById("send");
+const preview=document.getElementById("preview");
+const form=document.getElementById("photoForm");
+const status=document.getElementById("status");
+
+photo.addEventListener("change",()=>{
+  status.textContent="";
+  status.className="";
+  if(!photo.files.length){send.disabled=true;preview.style.display="none";return;}
+  const file=photo.files[0];
+  if(file.size>10*1024*1024){
+    status.textContent="La photo dépasse 10 Mo. Merci d'en choisir une autre.";
+    status.className="error";
+    send.disabled=true; photo.value=""; preview.style.display="none"; return;
+  }
+  send.disabled=false;
+  preview.src=URL.createObjectURL(file);
+  preview.style.display="block";
+});
+
+form.addEventListener("submit",()=>{
+  send.disabled=true;
+  send.textContent="Envoi en cours…";
+  status.textContent="Merci, votre photo est en cours d'envoi.";
+});
+</script>
+</body>
+</html>
